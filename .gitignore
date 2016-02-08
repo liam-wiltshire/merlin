@@ -25,3 +25,4 @@ yconfig
 scans.priv.*
 excalibur.py
 *.gz
+merlin.cfg

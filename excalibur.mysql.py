@@ -19,7 +19,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-import datetime, re, sys, time, traceback, urllib2, shutil
+import datetime, re, sys, time, traceback, urllib2, shutil,os
+os.chdir("/var/www/vhosts/pa-rainbows.com/httpdocs/merlin");
+
 from sqlalchemy.sql import text, bindparam
 from Core.config import Config
 from Core.paconf import PA
@@ -29,12 +31,23 @@ from Core.maps import Updates, galpenis, apenis
 from Core.maps import galaxy_temp, planet_temp, alliance_temp, planet_new_id_search, planet_old_id_search
 from ConfigParser import ConfigParser as CP
 
+
+
+def skip_last(iterator):
+    prev = next(iterator)
+    for item in iterator:
+	yield prev
+	prev = item
+
 # From http://www.diveintopython.net/http_web_services/etags.html
 class DefaultErrorHandler(urllib2.HTTPDefaultErrorHandler):
     def http_error_default(self, req, fp, code, msg, headers):
         result = urllib2.HTTPError(req.get_full_url(), code, msg, headers, fp)
         result.status = code
         return result 
+
+
+
 
 # Config files (absolute or relative paths) for all bots to be updated by this excalibur
 configs = ['merlin.cfg']
@@ -75,10 +88,12 @@ while True:
         req = urllib2.Request(Config.get("URL", "planets"))
         if last_tick > 0:
             u = Updates.load()
-            req.add_header('If-None-Match', u.etag)
-            req.add_header('If-Modified-Since', u.modified)
+     #       req.add_header('If-None-Match', u.etag)
+     #       req.add_header('If-Modified-Since', u.modified)
         opener = urllib2.build_opener(DefaultErrorHandler())
         planets = opener.open(req)
+
+
         try:
             if planets.status == 304:
                 excaliburlog("Dump files not modified. Waiting...")
@@ -112,7 +127,7 @@ while True:
         planet_tick=int(m.group(1))
         excaliburlog("Planet dump for tick %s" % (planet_tick,))
         # Skip next three lines; two are junk, next is blank, data starts next
-        planets.readline();planets.readline();planets.readline();
+        planets.readline();planets.readline();planets.readline();planets.readline();
 
         # As above
         galaxies.readline();galaxies.readline();galaxies.readline();
@@ -124,7 +139,7 @@ while True:
             continue
         galaxy_tick=int(m.group(1))
         excaliburlog("Galaxy dump for tick %s" % (galaxy_tick,))
-        galaxies.readline();galaxies.readline();galaxies.readline();
+        galaxies.readline();galaxies.readline();galaxies.readline();galaxies.readline();
 
         # As above
         alliances.readline();alliances.readline();alliances.readline();
@@ -136,7 +151,7 @@ while True:
             continue
         alliance_tick=int(m.group(1))
         excaliburlog("Alliance dump for tick %s" % (alliance_tick,))
-        alliances.readline();alliances.readline();alliances.readline();
+        alliances.readline();alliances.readline();alliances.readline();alliances.readline();
 
         # Check the ticks of the dumps are all the same and that it's
         #  greater than the previous tick, i.e. a new tick
@@ -168,7 +183,9 @@ while True:
         session.execute(galaxy_temp.delete())
         session.execute(planet_temp.delete())
         session.execute(alliance_temp.delete())
-#         session.execute(text("DROP TABLE IF EXISTS temp_1; DROP TABLE IF EXISTS temp_2;"))
+	#session.execute(temp_1.delete())
+	#session.execute(temp_2.delete())
+        ##session.execute(text("DROP TABLE IF EXISTS temp_1; DROP TABLE IF EXISTS temp_2;"))
 
         # If the new tick is below the shuffle tick, empty out all the data
         #  and don't store anything from the dumps other than the tick itself
@@ -191,7 +208,7 @@ while True:
                                                 "score": int(p[7] or 0),
                                                 "value": int(p[8] or 0),
                                                 "xp": int(p[9] or 0),
-                                               } for p in [decode(line).strip().split("\t") for line in planets]]) if planets else None
+                                               } for p in [decode(line).strip().split("\t") for line in skip_last(planets)]]) if planets else None
         # Galaxies
         session.execute(galaxy_temp.insert(), [{
                                                 "x": int(g[0]),
@@ -201,7 +218,7 @@ while True:
                                                 "score": int(g[4] or 0),
                                                 "value": int(g[5] or 0),
                                                 "xp": int(g[6] or 0),
-                                               } for g in [decode(line).strip().split("\t") for line in galaxies]]) if galaxies else None
+                                               } for g in [decode(line).strip().split("\t") for line in skip_last(galaxies)]]) if galaxies else None
         # Alliances
         session.execute(alliance_temp.insert(), [{
                                                 "score_rank": int(a[0]),
@@ -215,7 +232,7 @@ while True:
                                                 "size_avg": int(a[2] or 0) / int(a[3] or 1),
                                                 "score_avg": int(a[4] or 0) / min(int(a[3] or 1), PA.getint("numbers", "tag_count")),
                                                 "points_avg": int(a[5] or 0) / int(a[3] or 1),
-                                               } for a in [decode(line).strip().split("\t") for line in alliances]]) if alliances else None
+                                               } for a in [decode(line).strip().split("\t") for line in skip_last(alliances)]]) if alliances else None
 
         t2=time.time()-t1
         excaliburlog("Inserted dumps in %.3f seconds" % (t2,))
@@ -252,7 +269,8 @@ while True:
                                   score INT, 
                                   xp INT, 
                                   totalroundroids INT, 
-                                  totallostroids INT
+                                  totallostroids INT,
+  				  score_total INT
                              );
                                  INSERT INTO temp_1 SELECT t.*,
                                    COALESCE(c.totalroundroids + (GREATEST(t.size - c.size, 0)), t.size) AS totalroundroids,
@@ -262,6 +280,7 @@ while True:
                                    sum(size) as size,
                                    sum(value) as value,
                                    sum(score) as score,
+				   sum(score) as score_total,
                                    sum(xp) as xp
                                  FROM planet_temp
                                    GROUP BY x) AS t
@@ -570,7 +589,9 @@ while True:
                                 WHERE g.id = t.id
                                    AND g.x = p.x AND g.y = p.y
                                 AND g.active = :true
-                            ; DROP TABLE temp_1; DROP TABLE temp_2; DROP TABLE temp_3;""", bindparams=[tick, true, bindparam("priv_gal",PA.getint("numbers", "priv_gal"))]))
+                            ;DROP TABLE temp_1; DROP TABLE temp_2;""", bindparams=[tick, true, bindparam("priv_gal",PA.getint("numbers", "priv_gal"))]))
+
+
 
         t2=time.time()-t1
         excaliburlog("Update galaxies from temp and generate ranks in %.3f seconds" % (t2,))
@@ -763,12 +784,14 @@ while True:
                                   value INT, 
                                   xp INT, 
                                   totalroundroids INT, 
-                                  totallostroids INT
+                                  totallostroids INT,
+  				  score_total INT
                                 );
 
                                  INSERT INTO temp_1 SELECT t.*,
                                    COALESCE(p.totalroundroids + (GREATEST(t.size - p.size, 0)), t.size) AS totalroundroids,
-                                   COALESCE(p.totallostroids + (GREATEST(p.size - t.size, 0)), 0) AS totallostroids
+                                   COALESCE(p.totallostroids + (GREATEST(p.size - t.size, 0)), 0) AS totallostroids,
+					t.score as score_total
                                  FROM planet AS p, planet_temp AS t
                                    WHERE p.id = t.id AND p.active = :true;
                              """, bindparams=[true]))
@@ -1017,7 +1040,9 @@ while True:
                                   score_avg INT, 
                                   points_avg INT, 
                                   totalroundroids INT, 
-                                  totallostroids INT
+                                  totallostroids INT,
+				  score_total INT,
+				  value_total INT
                                 );
 
                                  INSERT INTO temp_1 SELECT t.*,
@@ -1057,7 +1082,7 @@ while True:
 
                                   a.age = COALESCE(a.age, 0) + 1,
                                   a.size = t.size, a.members = t.members, a.score = t.score, a.points = t.points,
-                                  score_total = t.score_total, value_total = t.value_total,
+                                  a.score_total = t.score_total, a.value_total = t.value_total,
                                   a.size_avg = t.size_avg, a.score_avg = t.score_avg, a.points_avg = t.points_avg,
                                   a.ratio = CASE WHEN (t.score != 0) THEN 10000.0 * t.size / t.score ELSE 0 END,
                              """ + (
@@ -1248,7 +1273,7 @@ session.close()
 t_start = time.time()
 for i in range(len(bots)):
     if bots[i].getboolean("Misc", "acl"):
-        session.execute(text("UPDATE %srequest SET active=:false WHERE active=:true AND tick < %s;" % (prefixes[i], planet_tick-bots[i].getint("Scans", "reqexpire")), bindparams=[false, true]))
+        session.execute(text("UPDATE %srequest SET active=:false WHERE active=:true AND tick < %s;" % (prefixes[i], planet_tick-bots[i].getint("Misc", "reqexpire")), bindparams=[false, true]))
     else:
         session.execute(text("UPDATE %srequest SET active=:false WHERE active=:true AND tick < %s;" % (prefixes[i], planet_tick-bots[i].getint("Misc", "reqexpire")), bindparams=[false, true]))
 session.commit()

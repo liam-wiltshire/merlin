@@ -2032,10 +2032,10 @@ class FleetScan(Base):
     owner_id = Column(Integer, ForeignKey(Planet.id, ondelete='cascade'))
     target_id = Column(Integer, ForeignKey(Planet.id, ondelete='set null'))
     fleet_size = Column(Integer)
-    fleet_name = Column(String(255))
+    fleet_name = Column(String(50))
     launch_tick = Column(Integer)
     landing_tick = Column(Integer)
-    mission = Column(String(255))
+    mission = Column(String(50))
     in_cluster = Column(Boolean)
     in_galaxy = Column(Boolean)
     

@@ -1,5 +1,5 @@
-# This file is part of Merlin/Arthur.
-# Merlin/Arthur is the Copyright (C)2009,2010 of Elliot Rosemarine.
+# This file is part of Merlin.
+# Merlin is the Copyright (C)2008,2009,2010 of Robin K. Hansen, Elliot Rosemarine, Andreas Jacobsen.
 
 # Individual portions may be copyright by individual contributors, and
 # are included in this collective work with permission of the copyright
@@ -19,10 +19,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-from django.conf.urls import include, patterns, url
-handler404 = 'Arthur.errors.page_not_found'
-handler500 = 'Arthur.errors.server_error'
-urlpatterns = patterns('',
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/var/www/vhosts/pa-rainbows.com/httpdocs/merlin/Arthur/static/'}),
-    (r'', include('Arthur.views')),
-)
+import re
+from Core import Merlin
+from Core.db import session
+from Core.maps import Channel
+from Core.config import Config
+from Core.loadable import system, loadable, route
+
+
+class join(loadable):
+    """Join a channel (usually for testing when P isn't available)"""
+    usage = " #<chan>"
+    
+    @route(r"(#)(\w+)")
+    def execute(self, message, user, params):
+	hash, chan = params.groups();        
+
+        message.join("#" + chan);

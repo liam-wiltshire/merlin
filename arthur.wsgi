@@ -20,8 +20,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
 import os, sys
-sys.path.append('/home/merlin/')
-os.chdir('/home/merlin/')
+sys.path.append('/var/www/vhosts/pa-rainbows.com/httpdocs/merlin/')
+os.chdir('/var/www/vhosts/pa-rainbows.com/httpdocs/merlin/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Arthur.settings")
 
 import Arthur

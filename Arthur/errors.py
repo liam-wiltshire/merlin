@@ -42,10 +42,10 @@ def page_not_found(request):
     return HttpResponseNotFound(render("error.tpl", request, msg="Page not found"))
 
 def server_error(request):
-    # raise ## Uncomment this when shit breaks and you're not getting an error message
+    raise ## Uncomment this when shit breaks and you're not getting an error message
     return HttpResponseServerError(render("error.tpl", request, msg="Server error, please report the error to an admin as soon as possible"))
 
 class exceptions(object):
     def process_exception(self, request, exception):
-        arthurlog("%s - Arthur Error: %s\n%s\n" % (time.asctime(),str(exception),request.get_full_path(),))
+        print("%s - Arthur Error: %s\n%s\n" % (time.asctime(),str(exception),request.get_full_path(),))
         return server_error(request)

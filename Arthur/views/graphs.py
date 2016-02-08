@@ -30,6 +30,7 @@ from Arthur.loadable import loadable, load
 graphing = Config.get("Misc", "graphing") != "disabled"
 caching  = Config.get("Misc", "graphing") == "cached"
 if graphing:
+    print "GraphTime!";
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -37,7 +38,7 @@ if graphing:
     from matplotlib.ticker import FuncFormatter
 
 urlpatterns = patterns('',
-  url(r'^graphs/(?P<type>values|ranks)/', include(patterns('Arthur.views.graphs',
+  url(r'^arthur/graphs/(?P<type>values|ranks)/', include(patterns('Arthur.views.graphs',
     url(r'^(?P<x>\d+)[. :\-](?P<y>\d+)[. :\-](?P<z>\d+)', 'planet', name="planetG"),
     url(r'^(?P<x>\d+)[. :\-](?P<y>\d+)', 'galaxy', name="galaxyG"),
     url(r'^(?P<name>[^/]+)', 'alliance', name="allianceG"),
@@ -77,7 +78,7 @@ class graphs(loadable):
     
     def process_request(self, request):
         if request.path_info == "/draw":
-            if 'REDIRECT_URL' in request.META and request.META['REDIRECT_URL'].startswith("/graphs"):
+            if 'REDIRECT_URL' in request.META and request.META['REDIRECT_URL'].startswith("/arthur/graphs"):
                 request.path_info = request.META['REDIRECT_URL']
                 del request.META['REDIRECT_URL']
     

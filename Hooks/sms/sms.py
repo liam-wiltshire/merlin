@@ -92,15 +92,17 @@ class sms(loadable):
         if mode == "email":
             error = self.send_email(user, receiver, public_text, phone, text)
         elif mode == "whatsapp":
-            if receiver.phone[0] == "g":
-                phone = receiver.phone
-            wa = WhatsappEchoClient(phone[1:], text, True)
-            wa.login(Config.get("WhatsApp", "login"), Config.get("WhatsApp", "password").decode("string_escape"))
-            if wa.gotReceipt:
-                error = None
-                self.log_message(user, receiver, phone, public_text, "whatsapp")
-            else:
-                error = "No receipt received from the WhatsApp server."
+ #           if receiver.phone[0] == "g":
+		phone = receiver.phone
+		self.send_wa(phone,text);
+		error = None;
+#            wa = WhatsappEchoClient(phone[1:], text, True)
+#            wa.login(Config.get("WhatsApp", "login"), Config.get("WhatsApp", "password").decode("string_escape"))
+#            if wa.gotReceipt:
+#                error = None
+#                self.log_message(user, receiver, phone, public_text, "whatsapp")
+#            else:
+#                error = "No receipt received from the WhatsApp server."
         elif mode == "twilio":
             client = TwilioRestClient(Config.get("Twilio", "sid"), Config.get("Twilio", "auth_token"))
             tw = client.sms.messages.create(body=text, to=phone, from_=Config.get("Twilio", "number"))
@@ -129,6 +131,16 @@ class sms(loadable):
         else:
             message.reply(error or "That wasn't supposed to happen. I don't really know what went wrong. Maybe your mother dropped you.")
     
+
+    def send_wa(self,phone,text):
+	# HTTP POST
+	post = urlencode({"phone"          : phone.lstrip("+"),
+		          "message"        : text,
+		        })
+	# Send the SMS
+	status = urlopen("http://www.pa-rainbows.com/whatsapp/sendWA.php", post, 10).read();
+	return "";
+
     def send_clickatell(self, user, receiver, public_text, phone, message):
         try:
             # HTTP POST

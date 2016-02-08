@@ -48,4 +48,5 @@ __all__ = ["system",
            "rollback",
            "updatenotifier",
            "adminmsg",
+	   "bows",
            ]
