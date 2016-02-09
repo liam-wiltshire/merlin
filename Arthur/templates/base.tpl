@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="static/style.css" />
     {% if menu %}
     <!-- FreeStyle Menu v1.0RC by Angus Turnbull http://www.twinhelix.com -->
-    <script type="text/javascript" src="/static/fsmenu.js"></script>
+    <script type="text/javascript" src="static/fsmenu.js"></script>
     <link rel="stylesheet" type="text/css" href="static/listmenu_h.css" id="listmenu-h" title="Horizontal 'Earth'" />
     <!-- Fallback CSS menu file allows list menu operation when JS is disabled. -->
     <noscript><link rel="stylesheet" type="text/css" href="static/listmenu_fallback.css" /></noscript>

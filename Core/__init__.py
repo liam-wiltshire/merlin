@@ -22,6 +22,7 @@
 import gc
 import sys
 import time
+import os
 
 class merlin(object):
     # Main bot container
@@ -50,12 +51,14 @@ class merlin(object):
         from Core.chanusertracker import CUT
         from Core.robocop import RoboCop
         from Core.router import Router
+	from Core.actions import Action
         
         # Collect any garbage remnants that might have been left behind
         #  from an old loader or backup that wasn't properly dereferenced
         gc.collect()
         
         try:
+
             # Attach the IRC connection and configure
             self.irc = Connection.attach(*self.irc)
             # Attach the RoboCop/clients sockets and configure
@@ -91,5 +94,9 @@ class merlin(object):
             self.irc = Connection.disconnect(str(exc) or "Bye!")
             self.robocop = RoboCop.disconnect(str(exc) or "Bye!")
             sys.exit("Bye!")
+
+
+
+	
 
 Merlin = merlin()

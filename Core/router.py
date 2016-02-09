@@ -21,7 +21,7 @@
  
 import select
 import time
-
+from threading import Timer
 from Core.exceptions_ import MerlinSystemCall, Reboot, Call999, UnderArrest
 from Core.loader import Loader
 from Core.string import errorlog
@@ -29,12 +29,49 @@ from Core.connection import Connection
 from Core.actions import Action
 from Core.robocop import RoboCop, EmergencyCall
 from Core.callbacks import Callbacks
+from Core.config import Config
+from Core.maps import User
 
 class router(object):
     message = None
     
+    def checkWA(self):
+	f = open('/tmp/ircinc','r');
+	lines = f.readlines();
+	f.close();
+	f = open('/tmp/ircinc','w');
+	f.close();	
+	#Do we have any messages to send back
+	act = Action();
+	for line in lines:	
+		##Parse the message and work out which channel(s) it relates to
+		parts = line.split('||',2);
+		user = User.byPhone('+' + str(parts[1]));
+		displayUser = str(parts[1]);
+		
+		if user is not None:
+			displayUser = str(user.name);
+
+
+		if (parts[0] == Config.get("gateway","wagroup1")):
+			print "Send message to " + Config.get("gateway","ircchan1");
+			self.actions = Action.privmsg(act,"[WA:"+displayUser+"] " + parts[2] , Config.get("gateway","ircchan1"))
+		if (parts[0] == Config.get("gateway","wagroup2")):
+			print "Send message to " + Config.get("gateway","ircchan2");
+			self.actions = Action.privmsg(act,"[WA:"+displayUser+"] " + parts[2] , Config.get("gateway","ircchan2"))
+		if (parts[0] == Config.get("gateway","wagroup3")):
+			print "Send message to " + Config.get("gateway","ircchan3");
+			self.actions = Action.privmsg(act,"[WA:"+displayUser+"] " + parts[2] , Config.get("gateway","ircchan3"))
+
+
+		
+	t = Timer(10.0,self.checkWA).start();
+
     def run(self):
         
+	t = Timer(10.0,self.checkWA).start();
+
+
         # If we've been asked to reload, report if it didn't work
         if Loader.success is False and self.message is not None:
             self.message.alert("I detect a sudden weakness in the Morphing Grid.")
@@ -42,6 +79,8 @@ class router(object):
         # Operation loop
         #   Loop to parse every line received over the connections
         while True:
+
+
             
             # Generate a list of connections ready to read
             inputs = select.select([Connection, RoboCop]+RoboCop.clients, [], [], 330)[0]
@@ -51,6 +90,7 @@ class router(object):
             if len(inputs) == 0:
                 raise Reboot("Timed out.")
             
+
             # Loop over the connections that are ready to read
             for connection in inputs:
                 
@@ -68,6 +108,7 @@ class router(object):
                 except Exception, e:
                     print "%s Routing error logged." % (time.asctime(),)
                     errorlog("%s - Routing Error: %s\n%s\n" % (time.asctime(),str(e),connection,))
+
     
     def irc(self):
         # A line from IRC

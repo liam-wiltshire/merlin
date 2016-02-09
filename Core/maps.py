@@ -1365,6 +1365,15 @@ class User(Base):
             return hashlib.sha1(passwd).hexdigest() == self.passwd
 
     @staticmethod
+    def byPhone(phone=0):
+	query = "SELECT * FROM "+Config.get('DB','prefix')+"users WHERE phone = '"+phone+"' LIMIT 1";
+	print "Lookup: "+query;
+	result = session.execute(query);
+	row = result.fetchone();
+	result.close();
+	return row;
+
+    @staticmethod
     def load(name=None, id=None, passwd=None, exact=True, active=True, access=0):
         assert id or name
         Q = session.query(User)

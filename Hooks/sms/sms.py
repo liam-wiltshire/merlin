@@ -33,8 +33,6 @@ from Core.string import decode, encode
 from Core.db import session
 from Core.maps import User, SMS
 from Core.loadable import loadable, route, require_user
-if Config.get("WhatsApp", "login"):
-    from yowsup.src.Examples.EchoClient import WhatsappEchoClient
 if Config.get("Twilio", "sid"):
     from twilio.rest import TwilioRestClient
 
@@ -133,12 +131,14 @@ class sms(loadable):
     
 
     def send_wa(self,phone,text):
+	f = open('/tmp/yowsup', 'a');
+	f.write('/message send '+phone.lstrip("+")+' "'+text+'"\n');
 	# HTTP POST
-	post = urlencode({"phone"          : phone.lstrip("+"),
-		          "message"        : text,
-		        })
+	#post = urlencode({"phone"          : phone.lstrip("+"),
+	#	          "message"        : text,
+	#	        })
 	# Send the SMS
-	status = urlopen("http://www.pa-rainbows.com/whatsapp/sendWA.php", post, 10).read();
+	#status = urlopen("http://www.pa-rainbows.com/whatsapp/sendWA.php", post, 10).read();
 	return "";
 
     def send_clickatell(self, user, receiver, public_text, phone, message):

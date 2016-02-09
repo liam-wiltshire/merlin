@@ -30,6 +30,7 @@ from Core.loader import Loader
 from Core.string import errorlog
 from Core.db import session
 from Core.loadable import loadable
+from Core.config import Config
 
 class callbacks(object):
     use_init_all = True
@@ -119,6 +120,22 @@ class callbacks(object):
                 finally:
                     # Remove any uncommitted or unrolled-back state
                     session.remove()
+	#Send the message to WA
+	if (message._command == "PRIVMSG" and message._channel == '#BowTest'):
+		#Do we have a group for this channel
+		if (message._channel == Config.get('gateway','ircchan1')):
+			f = open('/tmp/yowsup', 'a');
+			f.write('/message send '+Config.get('gateway','wagroup1')+' "[IRC:'+message._nick+'@'+message._channel+'] '+message._msg+'"\n')
+			f.close();
+		if (message._channel == Config.get('gateway','ircchan2')):
+			f = open('/tmp/yowsup', 'a');
+			f.write('/message send '+Config.get('gateway','wagroup2')+' "[IRC:'+message._nick+'@'+message._channel+'] '+message._msg+'"\n')
+			f.close();
+		if (message._channel == Config.get('gateway','ircchan3')):
+			f = open('/tmp/yowsup', 'a');
+			f.write('/message send '+Config.get('gateway','wagroup3')+' "[IRC:'+message._nick+'@'+message._channel+'] '+message._msg+'"\n')
+			f.close();
+
     
     def robocop(self, message):
         # Call back a hooked robocop module
