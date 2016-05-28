@@ -35,7 +35,7 @@
 {% block showsort %}{%for opt, name in orders if sort==opt%}<th>{{name}}</th>{%else%}{{super()}}{%endfor%}{%endblock%}
 {% block page %}/search/{{params}}/page:{{p}}/{% endblock %}
 {% block content %}
-<form method="post" action="/search/">
+<form method="post" action="/arthur/search/">
 <input type="hidden" value="search" name="search">
 <table cellspacing="1" cellpadding="3" width="700" class="black">
     <tr class="header"><th>Planet Search</th></tr>

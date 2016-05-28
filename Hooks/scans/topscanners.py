@@ -30,7 +30,7 @@ from Core.loadable import loadable, route
 class topscanners(loadable):
     """List top scanners in the last x ticks. Shows requested scans by default. Use the "all" option to show all parsed scans."""
     usage = " [<age> <number>] [all]"
-    access = "admin"
+    access = "dc"
     alias = "topscan"
     
     @route(r"(all)?")

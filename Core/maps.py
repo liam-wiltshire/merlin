@@ -1309,6 +1309,7 @@ class User(Base):
     email = Column(String(255))
     emailre = re.compile(r"^([\w.-]+@[\w.-]+)")
     phone = Column(String(255))
+    tguser = Column(String(50))
     pubphone = Column(Boolean, default=True) # Asc
     _smsmode = Column(Enum(*_sms_modes.keys(), name="smsmode"))
     sponsor = Column(String(255)) # Asc
@@ -1391,6 +1392,16 @@ class User(Base):
 	row = result.fetchone();
 	result.close();
 	return row;
+
+    @staticmethod
+    def byTguser(tguser=''):
+        query = "SELECT * FROM "+Config.get('DB','prefix')+"users WHERE tguser = '"+tguser+"' LIMIT 1";
+        print "Lookup: "+query;
+        result = session.execute(query);
+        row = result.fetchone();
+        result.close();
+        return row;
+
 
     @staticmethod
     def load(name=None, id=None, passwd=None, exact=True, active=True, access=0):

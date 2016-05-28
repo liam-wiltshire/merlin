@@ -19,13 +19,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-# List of package modules
-__all__ = [
-           "join",
-	   "todo",
-	   "addtodo",
-	   "done",
-	   "meetingmode",
-	   "threads",
-	   "accounts"
-           ]
+import re
+from sqlalchemy.sql import text, bindparam
+from Core import Merlin
+from Core.db import session
+from Core.string import decode
+from Core.maps import Channel
+from Core.config import Config
+from Core.loadable import system, loadable, route, require_user
+
+
+class done(loadable):
+    """Webulations ToDo list"""
+    usage = ""
+
+    @route(r"(.*)", access = "admin")
+    @require_user
+    def execute(self, message, user, params):
+	comment = params.groups();        
+	if (user.access < 500):
+		message.reply("Only HCs (user level 500+) can boss Webulations around!");
+	else:
+		comments = "";
+		comments = comments.join(comment).encode('ascii','replace')
+		
+		session.execute("UPDATE todo SET status = 'complete' WHERE comment LIKE '"+comments+"%'");

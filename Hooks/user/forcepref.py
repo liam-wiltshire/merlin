@@ -29,10 +29,10 @@ from Core.loadable import loadable, route, require_user
 
 class forcepref(loadable):
     """Set a user's planet, password for the webby, URL preference and phone number and settings; order doesn't matter"""
-    usage = " <user> [planet=x.y.z] [password=pass] [url=ip] [phone=999] [pubphone=T|F] [smsmode=clickatell|google|both|twilio|whatsapp|email] [email=user@example.com]"
+    usage = " <user> [planet=x.y.z] [password=pass] [url=ip] [phone=999] [pubphone=T|F] [smsmode=clickatell|google|both|twilio|whatsapp|email] [email=user@example.com]  [tguser=tguser]"
     planet_coordre = re.compile(loadable.planet_coord)
     
-    @route(r"(\S+)", access="admin")
+    @route(r"(\S+)", access="dc")
     @require_user
     def show_prefs(self, message, user, params):
 
@@ -51,6 +51,8 @@ class forcepref(loadable):
             reply += " url: %s" % (Config.get("alturls", user.url),)
         if user.email:
             reply += " email=%s" % (user.email,)
+        if user.tguser:
+            reply += " tguser=%s" % (user.tguser,)
         if user.phone:
             reply += " phone=%s pubphone=%s" % (user.phone, str(user.pubphone)[0],)
             if user.smsmode is not None:
@@ -60,7 +62,7 @@ class forcepref(loadable):
         else:
             message.reply("%s hasn't set any preferences" % (user.name,))
     
-    @route(r"(\S+)\s(.+)", access="admin")
+    @route(r"(\S+)\s(.+)", access="hc")
     @require_user
     def set_prefs(self, message, user, params):
 
@@ -100,6 +102,9 @@ class forcepref(loadable):
                     continue
                 user.passwd = val
                 reply += " password=%s"%(val)
+            if opt == "tguser":
+                user.tguser = val
+                reply += " tguser=%s"%(val)
             if opt == "url":
                 if val == "game" or val in self.nulls:
                     user.url = None

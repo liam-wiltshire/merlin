@@ -29,7 +29,7 @@ class remuser(loadable):
     """Permenantly delete a user"""
     usage = " <user>"
     
-    @route(r"(\S+)", access = "admin")
+    @route(r"(\S+)", access = "hc")
     @require_user
     def execute(self, message, user, params):
         

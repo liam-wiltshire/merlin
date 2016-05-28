@@ -53,7 +53,7 @@ class members(loadable):
         members = []
         for level in levels:
             Q = session.query(User.name, User.alias, User.sponsor, User.access, User.carebears, Planet, User.fleetupdated,
-                              User.phone, User.pubphone, or_(User.id == user.id, User.id.in_(session.query(PhoneFriend.user_id).filter_by(friend=user))))
+                              User.phone, User.pubphone, User._smsmode,  or_(User.id == user.id, User.id.in_(session.query(PhoneFriend.user_id).filter_by(friend=user))))
             Q = Q.outerjoin(User.planet)
             Q = Q.filter(User.active == True)
             Q = Q.filter(User.access >= level[1])

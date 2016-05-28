@@ -139,7 +139,7 @@ class search(loadable):
         
         if request.REQUEST.get("search"):
             r = request.REQUEST
-            search = "/search/"
+            search = "/arthur/search/"
             
             for word in wordfilts.keys() + ["nick", "alliance"]:
                 filt = (r.get(word) or "").strip()
@@ -189,7 +189,7 @@ class search(loadable):
                 o2o = "^" if o2o == "asc" else "_"
                 search += "order:%s%s|%s%s/" %(o1o,o1,o2o,o2,)
             
-            return HttpResponseRedirect(search)
+            return HttpResponseRedirect("/arthur/" + search)
         
         for param in params.lower().split("/"):
             if param == "bash" and user.planet is not None:

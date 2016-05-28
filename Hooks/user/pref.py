@@ -27,7 +27,7 @@ from Core.loadable import loadable, route, require_user
 
 class pref(loadable):
     """Set your planet, password for the webby, URL preference and phone number and settings; order doesn't matter"""
-    usage = " [planet=x.y.z] [password=pass] [url=ip] [phone=999] [pubphone=T|F] [smsmode=clickatell|twilio|whatsapp|email] [email=user@example.com]"
+    usage = " [planet=x.y.z] [password=pass] [url=ip] [phone=999] [pubphone=T|F] [smsmode=clickatell|twilio|whatsapp|email] [email=user@example.com] [tguser=tguser]"
     planet_coordre = re.compile(loadable.planet_coord)
     
     @route(r"")
@@ -40,6 +40,8 @@ class pref(loadable):
             reply += " url: %s" % (Config.get("alturls", user.url),)
         if user.email:
             reply += " email=%s" % (user.email,)
+        if user.tguser:
+	    reply += " tguser=%s" % (user.tguser,)
         if user.phone:
             reply += " phone=%s pubphone=%s" % (user.phone, str(user.pubphone)[0],)
             if user.smsmode is not None:
@@ -85,6 +87,9 @@ class pref(loadable):
                 reply += " password=%s"%(val)
                 if Config.has_section("FluxBB"):
                     flux_update = self.flux_passwd(user)
+	    if opt == "tguser":
+		user.tguser = val
+		reply += " tguser=%s"%(val)
             if opt == "url":
                 if val == "game" or val in self.nulls:
                     user.url = None

@@ -30,7 +30,7 @@ class theirdef(loadable):
     countre = re.compile(r"^((?:\d+(?:\.\d+)?[mk]?)|(?:[\d,]+))$",re.I)
     shipre = re.compile(r"^([a-zA-Z]+),?$")
     
-    @route(r"(\S*)\s(\d)\s*x\s*(.*)", access = "admin")
+    @route(r"(\S*)\s(\d)\s*x\s*(.*)", access = "dc")
     @require_user
     def execute(self, message, user, params):
         name=params.group(1)

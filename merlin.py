@@ -23,6 +23,7 @@
 import sys
 sys.stderr = sys.stdout
 
+
 if not 2.7 <= float(sys.version[:3]) < 3.0:
     sys.exit("Python 2.7.x Required")
 

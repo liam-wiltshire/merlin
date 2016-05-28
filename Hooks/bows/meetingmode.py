@@ -19,13 +19,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-# List of package modules
-__all__ = [
-           "join",
-	   "todo",
-	   "addtodo",
-	   "done",
-	   "meetingmode",
-	   "threads",
-	   "accounts"
-           ]
+import re
+import os
+from Core import Merlin
+from Core.db import session
+from Core.maps import Channel
+from Core.config import Config
+from Core.loadable import system, loadable, route, require_user
+
+class meetingmode(loadable):
+    """Control the bot's meeting mode (temporarily disable it)"""
+    usage = "[on|off]"
+    
+    @route(r"(on|off)")
+    @require_user
+    def execute(self, message, user, params):
+	act = params.groups();        
+	act = str(act[0]);
+        if (user.access < 500):
+                message.reply("Only HCs (user level 500+) can boss Webulations around!");
+        else:
+		if (act == "on"):
+			message.reply("Night night.");
+			os.system("touch /tmp/meetingmode");
+		if (act == "off"):
+			os.system("rm /tmp/meetingmode");
+			message.reply("Morning!");

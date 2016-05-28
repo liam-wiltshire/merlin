@@ -31,7 +31,7 @@ class members(loadable):
     """List all members, in format nick (alias). Optionally include coordinates, mydef age, tick of last mydef update."""
     usage = " [coords] [defage] [mydef] [galmates]"
     
-    @route(r"(.*)", access = "admin")
+    @route(r"(.*)", access = "hc")
     def execute(self, message, user, params):
         reply = ""
         tick=Updates.current_tick()

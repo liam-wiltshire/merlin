@@ -19,13 +19,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-# List of package modules
-__all__ = [
-           "join",
-	   "todo",
-	   "addtodo",
-	   "done",
-	   "meetingmode",
-	   "threads",
-	   "accounts"
-           ]
+import re
+from sqlalchemy.sql import text, bindparam
+from Core import Merlin
+from Core.db import session
+from Core.string import decode
+from Core.maps import Channel
+from Core.config import Config
+from Core.loadable import system, loadable, route, require_user
+
+
+class addtodo(loadable):
+    """Webulations ToDo list"""
+    usage = " [priority] [comment]"
+
+    @route(r"([0-9])\s+(.*)", access = "admin")
+    @require_user
+    def execute(self, message, user, params):
+	priority, comment = params.groups();        
+
+	if (user.access < 500):
+		message.reply("Only HCs (user level 500+) can boss Webulations around!");
+	else:
+
+		message.reply("Add "+comment+" with priority "+priority+"");
+		username = user.name;
+		session.execute(text("""INSERT into todo (comment,author,priority) values(:comment,:username,:priority)""", bindparams=[bindparam("comment",comment),bindparam("username",username),bindparam("priority",priority)]));

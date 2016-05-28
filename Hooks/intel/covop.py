@@ -27,13 +27,12 @@ from Core.paconf import PA
 
 class covop(loadable):
     """Calculates target alert, damage caused and likelihood of success of a covop based on stored scans."""
-    usage = " <x:y:z> [agents] [stealth]"
+    usage = " <x:y:z> [agents] [stealth] [gov]"
     access = "member"
     
-    @route(loadable.planet_coord+r"(?:\s+(\d+))?(?:\s+(\d+))?")
+    @route(loadable.planet_coord+r"(?:\s+(\d+))?(?:\s+(\d+))?(?:\s+(\w+))?")
     @require_planet
     def execute(self, message, user, params):
-        
         planet = Planet.load(*params.group(1,3,5))
         if planet is None:
             message.alert("No planet with coords %s:%s:%s" % params.group(1,3,5))
@@ -57,12 +56,18 @@ class covop(loadable):
             d_age = tick - dscan.tick
             dscan = dscan.devscan
 
+
+
         # Get government info from pa.cfg and intel
         gov_bonus = 0
         gov = "Unknown"
         gov_alert_max = 0.00
         gov_alert_min = 0.00
         int_gov = planet.intel.gov
+
+	if (params.group(8)):
+		int_gov = params.group(8);
+
         if int_gov is not None:
             int_gov = int_gov[0].lower()
         for gcode in PA.options("govs"):

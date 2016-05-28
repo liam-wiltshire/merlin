@@ -26,6 +26,7 @@ from Core.chanusertracker import CUT
 from Core.messages import Message, PUBLIC_REPLY, PRIVATE_REPLY, NOTICE_REPLY
 from Core.config import Config
 from Core.maps import User
+import os.path
 
 class Action(Message):
     # This object holds the parse, and will enable users to send messages to the server on a higher level
@@ -93,6 +94,8 @@ class Action(Message):
             Connection.write(params, p)
     
     def privmsg(self, text, target=None, priority=0):
+	if (os.path.isfile("/tmp/meetingmode")):
+		return
         # Privmsg someone. Target defaults to the person who triggered this line
         # Should we send colours?
         if (Config.has_option("Connection", "color") and not Config.has_option("NoColor", target) and not (target[0] in ['#','&'] and Config.has_option("NoColorChan", target[1:]))):
@@ -116,6 +119,8 @@ class Action(Message):
             self.write("NOTICE %s :%s" % (target or self.get_nick(), text), priority=priority)
     
     def reply(self, text, priority=0):
+	if (os.path.isfile("/tmp/meetingmode")):
+		return
         if self.get_command() != "PRIVMSG":
             return
         # Caps Lock is cruise control for awesome
@@ -125,7 +130,15 @@ class Action(Message):
         # Always reply to an @command with a PM
         reply = self.reply_type()
         if reply == PUBLIC_REPLY:
+	    from Core.messager import Messager
             self.privmsg(text, self.get_chan(), priority=priority)
+	    msg = Message();
+	    msg._nick = 'BowBot';
+	    msg._channel = self.get_chan();
+	    msg._msg = text;
+	    msg._command = 'PRIVMSG';
+            msgr = Messager();
+	    msgr.sendExternal(msg);
         if reply == PRIVATE_REPLY:
             self.privmsg(text, self.get_nick(), priority=priority)
         if reply == NOTICE_REPLY:

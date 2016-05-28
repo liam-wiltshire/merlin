@@ -15,9 +15,10 @@
         <th width="70"><a href="{% url "members", "carebears" %}">CareBears</a></th>
         <th width="60"><a href="{% url "members", "planet" %}">Planet</a></th>
         <th width="80"><a href="{% url "members", "defage" %}">MyDef Age</a></th>
-        <th width="200">Phone</th>
+        <th width="150">Phone</th>
+	<th width="50">SmsMode</th>
     </tr>
-    {% for member, alias, sponsor, access, carebears, p, fleetupdated, phone, pubphone, phonefriend in members %}
+    {% for member, alias, sponsor, access, carebears, p, fleetupdated, phone, pubphone, _smsmode, phonefriend in members %}
     <tr class="{{ loop.cycle('odd', 'even') }}">
         <td class="center"><a href="{% url "dashboard", member %}">{{ member }}</a>{% if alias %} ({{ alias }}){% endif %}</td>
         <td class="center"><a href="{% url "dashboard", sponsor %}">{{ sponsor }}</a></td>
@@ -26,6 +27,7 @@
         <td class="center">{% if p %}<a {{planetlink(p)}}>{{ p.x }}:{{ p.y }}:{{ p.z }}</a>{% endif %}</td>
         <td class="right">{% if fleetupdated %}{{ tick - fleetupdated }} ticks{% endif %}</td>
         <td class="left">{% if pubphone or phonefriend %}{{ phone }}{% else %}Hidden{% endif %}</td>
+	<th class="left">{{ _smsmode }}</td>
     </tr>
     {% endfor %}
 </table>

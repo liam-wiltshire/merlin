@@ -31,46 +31,18 @@ from Core.robocop import RoboCop, EmergencyCall
 from Core.callbacks import Callbacks
 from Core.config import Config
 from Core.maps import User
+from Core.messager import Messager
 
 class router(object):
     message = None
-    
-    def checkWA(self):
-	f = open('/tmp/ircinc','r');
-	lines = f.readlines();
-	f.close();
-	f = open('/tmp/ircinc','w');
-	f.close();	
-	#Do we have any messages to send back
-	act = Action();
-	for line in lines:	
-		##Parse the message and work out which channel(s) it relates to
-		parts = line.split('||',2);
-		user = User.byPhone('+' + str(parts[1]));
-		displayUser = str(parts[1]);
-		
-		if user is not None:
-			displayUser = str(user.name);
+    messager = None
 
-
-		if (parts[0] == Config.get("gateway","wagroup1")):
-			print "Send message to " + Config.get("gateway","ircchan1");
-			self.actions = Action.privmsg(act,"[WA:"+displayUser+"] " + parts[2] , Config.get("gateway","ircchan1"))
-		if (parts[0] == Config.get("gateway","wagroup2")):
-			print "Send message to " + Config.get("gateway","ircchan2");
-			self.actions = Action.privmsg(act,"[WA:"+displayUser+"] " + parts[2] , Config.get("gateway","ircchan2"))
-		if (parts[0] == Config.get("gateway","wagroup3")):
-			print "Send message to " + Config.get("gateway","ircchan3");
-			self.actions = Action.privmsg(act,"[WA:"+displayUser+"] " + parts[2] , Config.get("gateway","ircchan3"))
-
-
-		
-	t = Timer(10.0,self.checkWA).start();
 
     def run(self):
-        
-	t = Timer(10.0,self.checkWA).start();
 
+	self.messager = Messager();
+	self.messager.startTGCheck();
+        
 
         # If we've been asked to reload, report if it didn't work
         if Loader.success is False and self.message is not None:

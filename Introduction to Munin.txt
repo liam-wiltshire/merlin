@@ -1,9 +1,9 @@
 -------------------------
-Introduction to Munin
+Introduction to BowBot
 -------------------------
 
-Things you need to do as soon as you join Ascendancy:
-!pref password=xxx - Do this in PM with Munin, this will allow you to use Ascendancy.tv and !letmein if P is down.
+Things you need to do as soon as you join RainbowS:
+!pref password=xxx - Do this in PM with BowBot, this will allow you to use http://www.pa-rainbows.com/arthur/.
 
 !pref planet=x:y:z - This will allow Munin to use your co ords for things such as !lookup, !xp, !basher etc.
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import re
+import os
 from Hooks.scans.parser import parse
 from time import sleep
 import gc
@@ -13,7 +14,9 @@ with open("1000scans.txt") as f:
         print "Processing scan %d..." % (i)
         scanid = scanre.match(x).group(1)
         parse(1, "scan", scanid).start()
-        sleep(2)
+        sleep(1)
         gc.collect()
 
+
+os.remove("1000scans.txt");
 print "Done."

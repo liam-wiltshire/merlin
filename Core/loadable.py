@@ -206,24 +206,29 @@ class loadable(_base):
             message.alert(self.usage)
     
     def check_access(self, message, access=None, user=None, channel=None):
+	print "Checking for access - "+str(access)+"";
         access = access or self.access
         if message.in_chan():
             channel = channel or Channel.load(message.get_chan()) or Channel(maxlevel=0, userlevel=0)
             if channel.maxlevel < access and message.reply_type() == PUBLIC_REPLY:
+		print "ChanMaxLevel";
                 raise UserError
         else:
             channel = Channel(userlevel=0)
         chan = message.get_chan() if message.in_chan() else None
         user = user or CUT.get_user(message.get_nick(), chan, pnickf=message.get_pnick)
+	print (user);
         if self.is_user(user):
             if max(user.access, channel.userlevel) >= access:
                 return user
             else:
+		print "IsUserError";
                 raise UserError
         else:
             if channel.userlevel >= access:
                 return User()
             elif message.get_pnick():
+		print "Msgpnick";
                 raise UserError
     
     def help(self, message):

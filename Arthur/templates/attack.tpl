@@ -38,7 +38,7 @@
             <td class="center">
                 {% for scan in scans %}
                     {% set scanage = update.id - scan.tick %}
-                    <a href="#{{ scan.pa_id }}" onclick="return linkshift(event, '{{ scan.link|url }}');" class="scan_age_{% 
+                    <a href="attack/{{ attack.id }}/#{{ scan.pa_id }}" onclick="return linkshift(event, '{{ scan.link|url }}');" class="scan_age_{% 
                         if scanage > 12 %}ancient{% elif scanage > 5 %}older{% elif scanage > 0 %}old{% else %}new{% endif %}">{{ scan.scantype }}</a>
                 {% endfor %}
             </td>

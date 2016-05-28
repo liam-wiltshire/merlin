@@ -23,6 +23,7 @@ import json
 import re
 import socket
 import time
+import os
 from smtplib import SMTP, SMTPException, SMTPSenderRefused, SMTPRecipientsRefused
 from ssl import SSLError
 from urllib import urlencode
@@ -38,16 +39,26 @@ if Config.get("Twilio", "sid"):
 
 class sms(loadable):
     """Sends an SMS to the specified user. Your username will be appended to the end of each sms. The user must have their phone correctly added and you must have access to their number."""
-    usage = " <nick> <message>"
+    usage = " <nick> <message> (mode=[t|w|c])?"
     
-    @route(r"(\S+)\s+(.+)", access = "member")
+    @route(r"(\S+)\s+(.+?)(\s+mode=[t|w|c])?", access = "member")
     @require_user
     def execute(self, message, user, params):
         
         rec = params.group(1)
         public_text = params.group(2) + ' - %s' % (user.name,)
+	print params.group(3);
         text = encode(public_text + '/%s' %(user.phone,))
         receiver=User.load(name=rec,exact=False,access="member") or User.load(name=rec)
+
+	if (params.group(3) is not None):
+		method = params.group(3).strip().split("=");
+		if (method[1] == "w"):
+			receiver.smsmode = "Whatsapp";
+		if (method[1] == "t"):
+			receiver.smsmode = "Twillio";
+		if (method[1] == "c"):
+			receiver.smsmode = "Clickatell"
         if not receiver:
             message.reply("Who exactly is %s?" % (rec,))
             return
@@ -90,25 +101,22 @@ class sms(loadable):
         if mode == "email":
             error = self.send_email(user, receiver, public_text, phone, text)
         elif mode == "whatsapp":
- #           if receiver.phone[0] == "g":
-		phone = receiver.phone
-		self.send_wa(phone,text);
-		error = None;
-#            wa = WhatsappEchoClient(phone[1:], text, True)
-#            wa.login(Config.get("WhatsApp", "login"), Config.get("WhatsApp", "password").decode("string_escape"))
-#            if wa.gotReceipt:
-#                error = None
-#                self.log_message(user, receiver, phone, public_text, "whatsapp")
-#            else:
-#                error = "No receipt received from the WhatsApp server."
+		message.reply("SMS via WhatsApp has been disabled as WA fricking blocked us - re-routing to clickatell...");
+           	mode = "clickatell"
+            	receiver.smsmode = "clickatell"
+		error = self.send_clickatell(user, receiver, public_text, phone, text)		
         elif mode == "twilio":
-            client = TwilioRestClient(Config.get("Twilio", "sid"), Config.get("Twilio", "auth_token"))
-            tw = client.sms.messages.create(body=text, to=phone, from_=Config.get("Twilio", "number"))
-            if tw.sid:
-                error = None
-                self.log_message(user, receiver, phone, public_text, "twilio")
-            else:
-                error = "Failed to get message ID from Twilio server."
+	    mode = "clickatell"
+	    receiver.smsmode = "clickatell"
+	    message.reply("SMS via Twilio has been disabled - re-routing to clickatell...");
+	    error = self.send_clickatell(user, receiver, public_text, phone, text)
+            #client = TwilioRestClient(Config.get("Twilio", "sid"), Config.get("Twilio", "auth_token"))
+            #tw = client.sms.messages.create(body=text, to=phone, from_=Config.get("Twilio", "number"))
+            #if tw.sid:
+            #    error = None
+            #    self.log_message(user, receiver, phone, public_text, "twilio")
+            #else:
+            #    error = "Failed to get message ID from Twilio server."
         else:
             if mode == "googlevoice" or mode == "combined":
                 if Config.get("googlevoice", "user"):
@@ -125,21 +133,14 @@ class sms(loadable):
                         error = "smsmode set to Clickatell but no Clickatell account is available."
         
         if error is None:
-            message.reply("Successfully processed To: %s Message: %s" % (receiver.name, decode(text)))
+            message.reply("Successfully processed To: %s Message: %s Method: %s" % (receiver.name, decode(text),receiver.smsmode))
         else:
             message.reply(error or "That wasn't supposed to happen. I don't really know what went wrong. Maybe your mother dropped you.")
     
 
     def send_wa(self,phone,text):
-	f = open('/tmp/yowsup', 'a');
-	f.write('/message send '+phone.lstrip("+")+' "'+text+'"\n');
-	# HTTP POST
-	#post = urlencode({"phone"          : phone.lstrip("+"),
-	#	          "message"        : text,
-	#	        })
-	# Send the SMS
-	#status = urlopen("http://www.pa-rainbows.com/whatsapp/sendWA.php", post, 10).read();
-	return "";
+	print '/var/www/vhosts/pa-rainbows.com/httpdocs/yowsup-new/yowsup-cli demos -l 31644647579:gVtl81FmZouK3zRZkBrVJz+tLt8= -s '+phone.strip("+")+' "'+text+'"';
+	print os.system('/var/www/vhosts/pa-rainbows.com/httpdocs/yowsup-new/yowsup-cli demos -l 31644647579:gVtl81FmZouK3zRZkBrVJz+tLt8= -s '+phone.strip("+")+' "'+text+'"');
 
     def send_clickatell(self, user, receiver, public_text, phone, message):
         try:

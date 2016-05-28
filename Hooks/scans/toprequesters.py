@@ -30,7 +30,7 @@ from Core.loadable import loadable, route
 class toprequesters(loadable):
     """List top scan requesters in the last x ticks."""
     usage = " [<age> <number>]"
-    access = "admin"
+    access = "dc"
     alias = "topreq"
 
     @route(r"")

@@ -19,13 +19,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-# List of package modules
-__all__ = [
-           "join",
-	   "todo",
-	   "addtodo",
-	   "done",
-	   "meetingmode",
-	   "threads",
-	   "accounts"
-           ]
+import re
+import threading
+from Core import Merlin
+from Core.db import session
+from Core.maps import Channel
+from Core.config import Config
+from Core.loadable import system, loadable, route
+
+
+class threads(loadable):
+    """Show the number of threads"""
+    usage = ""
+
+    @route()    
+    def execute(self, message, user, params):
+	message.reply("Running Threads: "+str(threading.activeCount()));

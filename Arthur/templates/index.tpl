@@ -93,7 +93,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="4"><a href="/search/order:_size_growth/">Top Roiding Planets</a></th>
+                <th class="left" colspan="4"><a href="/arthur/search/order:_size_growth/">Top Roiding Planets</a></th>
                 <th class="right">Size</th>
                 <th class="right">Value</th>
                 <th class="right">Score</th>
@@ -121,7 +121,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="3"><a href="/search/order:_galsize_growth/">Top Roiding Galaxies</a></th>
+                <th class="left" colspan="3"><a href="/arthur/search/order:_galsize_growth/">Top Roiding Galaxies</a></th>
                 <th class="right">Size</th>
                 <th class="right">Value</th>
                 <th class="right">Score</th>
@@ -148,7 +148,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="4"><a href="/search/order:^size_growth/">Top Roided Planets</a></th>
+                <th class="left" colspan="4"><a href="/arthur/search/order:^size_growth/">Top Roided Planets</a></th>
                 <th class="right">Size</th>
                 <th class="right">Value</th>
                 <th class="right">Score</th>
@@ -176,7 +176,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="3"><a href="/search/order:^galsize_growth/">Top Roided Galaxies</a></th>
+                <th class="left" colspan="3"><a href="/arthur/search/order:^galsize_growth/">Top Roided Galaxies</a></th>
                 <th class="right">Size</th>
                 <th class="right">Value</th>
                 <th class="right">Score</th>
@@ -203,7 +203,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="4"><a href="/search/order:_xp_growth/">Top XP Gain Planets</a></th>
+                <th class="left" colspan="4"><a href="/arthur/search/order:_xp_growth/">Top XP Gain Planets</a></th>
                 <th class="right">XP</th>
                 <th class="right">Size</th>
                 <th class="right">Score</th>
@@ -231,7 +231,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="3"><a href="/search/order:_galxp_growth/">Top XP Gain Galaxies</a></th>
+                <th class="left" colspan="3"><a href="/arthur/search/order:_galxp_growth/">Top XP Gain Galaxies</a></th>
                 <th class="right">XP</th>
                 <th class="right">Size</th>
                 <th class="right">Score</th>
@@ -258,7 +258,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="4"><a href="/search/order:^value_growth/">Top Bashed Planets</a></th>
+                <th class="left" colspan="4"><a href="/arthur/search/order:^value_growth/">Top Bashed Planets</a></th>
                 <th class="right">Size</th>
                 <th class="right">Value</th>
                 <th class="right">Score</th>
@@ -286,7 +286,7 @@
     <td width="50%" valign="top"><center>
         <table width="100%" cellspacing="1" cellpadding="3" class="black">
             <tr class="header">
-                <th class="left" colspan="3"><a href="/search/order:^galvalue_growth/">Top Bashed Galaxies</a></th>
+                <th class="left" colspan="3"><a href="/arthur/search/order:^galvalue_growth/">Top Bashed Galaxies</a></th>
                 <th class="right">Size</th>
                 <th class="right">Value</th>
                 <th class="right">Score</th>
