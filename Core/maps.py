@@ -666,7 +666,7 @@ class Planet(Base):
         retstr="%s:%s:%s (%s) '%s' of '%s' " % (self.x,self.y,self.z,self.race,self.rulername,self.planetname)
         if self.special:
             flags = []
-            for flag in self.special.split():
+            for flag in self.special.split(","):
                 if flag == "P":
                     flag = "Prot"
                 elif flag == "D":
@@ -732,6 +732,7 @@ class PlanetHistory(Base):
     score = Column(Integer)
     value = Column(Integer)
     xp = Column(Integer)
+    special = Column(String(255))
     ratio = Column(Float)
     size_rank = Column(Integer)
     score_rank = Column(Integer)
@@ -1172,7 +1173,7 @@ Alliance.history_loader = relation(AllianceHistory, backref=backref('current', l
 class Feed(Base):
     __tablename__ = 'feed'
     id = Column(Integer, primary_key=True)
-    tick = Column(Integer, ForeignKey(Updates.id, ondelete='cascade'))
+    tick = Column(Integer)
     category = Column(String(255), index=True)
     alliance1_id = Column(Integer, ForeignKey(Alliance.id, ondelete='set null'), default=None, index=True)
     alliance2_id = Column(Integer, ForeignKey(Alliance.id, ondelete='set null'), default=None, index=True)
