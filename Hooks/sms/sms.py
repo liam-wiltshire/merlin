@@ -105,7 +105,7 @@ class sms(loadable):
            	mode = "clickatell"
             	receiver.smsmode = "clickatell"
 		error = self.send_clickatell(user, receiver, public_text, phone, text)		
-        elif mode == "twilio":
+        elif mode == "twilio" and phone[:2] != "+1":
 	    mode = "clickatell"
 	    receiver.smsmode = "clickatell"
 	    message.reply("SMS via Twilio has been disabled - re-routing to clickatell...");
@@ -117,6 +117,15 @@ class sms(loadable):
             #    self.log_message(user, receiver, phone, public_text, "twilio")
             #else:
             #    error = "Failed to get message ID from Twilio server."
+	elif mode == "twilio" and phone[:2] == "+1":
+            client = TwilioRestClient(Config.get("Twilio", "sid"), Config.get("Twilio", "auth_token"))
+            tw = client.sms.messages.create(body=text, to=phone, from_=Config.get("Twilio", "number"))
+            if tw.sid:
+                error = None
+                self.log_message(user, receiver, phone, public_text, "twilio")
+            else:
+                error = "Failed to get message ID from Twilio server."
+
         else:
             if mode == "googlevoice" or mode == "combined":
                 if Config.get("googlevoice", "user"):

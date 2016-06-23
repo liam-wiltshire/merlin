@@ -19,14 +19,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  
-# List of package modules
-__all__ = [
-           "join",
-	   "todo",
-	   "addtodo",
-	   "done",
-	   "meetingmode",
-	   "threads",
-	   "accounts",
-	   "bigredbutton",
-           ]
+import re
+import os
+from Core import Merlin
+from Core.db import session
+from Core.maps import Channel
+from Core.config import Config
+from Core.loadable import system, loadable, route
+
+
+class bigredbutton(loadable):
+    """Hit the big red button (does a full restart of the system)"""
+    usage = ""
+
+    @route()    
+    def execute(self, message, user, params):
+        if (user.access < 500):
+                message.reply("Only HCs can fiddle with the bot!!");
+        else:
+		os.system("touch /var/www/vhosts/pa-rainbows.com/httpdocs/redbutton");
+		message.reply("Button Pressed - restart will occour shortly");

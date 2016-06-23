@@ -126,6 +126,7 @@ class Messager():
 			callback = Callbacks.callback(message);
 
     def sendExternal(self,message):
+	print "Message Command:" + message._command;
         if (message._command == "PART" or message._command == "QUIT" or message._command == "KICK" or message._command == "KILL"):
                 #Do we have a group for this channel
                 if (message._channel == Config.get('gateway','ircchan1')):
@@ -179,7 +180,7 @@ class Messager():
     def checkTG(self):
 	print "CheckTG Started";
 	print "Running Threads: "+str(threading.activeCount());
-	t = Timer(2400.0,self.checkTG).start();
+	t = Timer(3600.0,self.checkTG).start();
 	#print "Stop Old Receviver";
 	if (self.receiver):
 		try:
