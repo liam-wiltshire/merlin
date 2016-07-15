@@ -2,7 +2,7 @@
 <table cellspacing="1" cellpadding="3" width="100%">
 <tr>
     <td rowspan="2" width="33%" align="left">
-        <a href="/"><img border="0" src="/static/logo.png" /></a>
+        <a href="/"><img border="0" src="/arthur/static/logo.png" /></a>
     </td>
     <th valign="top" align="center">{{ slogan }}{{fluxurl}}{{dumpurl}}</th>
     <td width="33%" align="right"></td>

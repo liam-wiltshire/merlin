@@ -22,11 +22,6 @@
 # List of package modules
 __all__ = [
            "join",
-	   "todo",
-	   "addtodo",
-	   "done",
-	   "meetingmode",
 	   "threads",
-	   "accounts",
 	   "bigredbutton",
            ]

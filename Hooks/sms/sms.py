@@ -105,19 +105,7 @@ class sms(loadable):
            	mode = "clickatell"
             	receiver.smsmode = "clickatell"
 		error = self.send_clickatell(user, receiver, public_text, phone, text)		
-        elif mode == "twilio" and phone[:2] != "+1":
-	    mode = "clickatell"
-	    receiver.smsmode = "clickatell"
-	    message.reply("SMS via Twilio has been disabled - re-routing to clickatell...");
-	    error = self.send_clickatell(user, receiver, public_text, phone, text)
-            #client = TwilioRestClient(Config.get("Twilio", "sid"), Config.get("Twilio", "auth_token"))
-            #tw = client.sms.messages.create(body=text, to=phone, from_=Config.get("Twilio", "number"))
-            #if tw.sid:
-            #    error = None
-            #    self.log_message(user, receiver, phone, public_text, "twilio")
-            #else:
-            #    error = "Failed to get message ID from Twilio server."
-	elif mode == "twilio" and phone[:2] == "+1":
+	elif mode == "twilio":
             client = TwilioRestClient(Config.get("Twilio", "sid"), Config.get("Twilio", "auth_token"))
             tw = client.sms.messages.create(body=text, to=phone, from_=Config.get("Twilio", "number"))
             if tw.sid:
@@ -148,8 +136,7 @@ class sms(loadable):
     
 
     def send_wa(self,phone,text):
-	print '/var/www/vhosts/pa-rainbows.com/httpdocs/yowsup-new/yowsup-cli demos -l 31644647579:gVtl81FmZouK3zRZkBrVJz+tLt8= -s '+phone.strip("+")+' "'+text+'"';
-	print os.system('/var/www/vhosts/pa-rainbows.com/httpdocs/yowsup-new/yowsup-cli demos -l 31644647579:gVtl81FmZouK3zRZkBrVJz+tLt8= -s '+phone.strip("+")+' "'+text+'"');
+	print "WA is no more..."
 
     def send_clickatell(self, user, receiver, public_text, phone, message):
         try:
